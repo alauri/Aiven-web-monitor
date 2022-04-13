@@ -1,0 +1,75 @@
+[tool.poetry]
+name = "aiven-monitor"
+version = "0.1.0"
+description = "Aiven websites monitoring"
+authors = ["Andrea Lauri <andrea.lauri86@gmail.com>"]
+readme = "README.md"
+packages = [
+    { include = "moniven" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+
+    "Operating System :: POSIX :: Linux",
+]
+
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.1"
+black = "^22.3.0"
+mypy = "^0.942"
+flake8 = "^4.0.1"
+isort = "^5.10.1"
+tox = "^3.25.0"
+pytest-cov = "^3.0.0"
+Sphinx = "^4.5.0"
+sphinx-rtd-theme = "^1.0.0"
+sphinxcontrib-napoleon = "^0.7"
+sphinx-autodoc-typehints = "^1.18.1"
+
+[tool.poetry.scripts]
+moniven-cli = "moniven.__main__:main"
+
+[tool.mypy]
+check_untyped_defs = true
+ignore_errors = false
+ignore_missing_imports = false
+strict_optional = true
+warn_unused_ignores = false
+warn_redundant_casts = true
+warn_unused_configs = true
+
+[tool.black]
+line-length = 80
+target_version = ['py310']
+
+[tool.isort]
+combine_as_imports = true
+ensure_newline_before_comments = true
+include_trailing_comma = true
+# https://pycqa.github.io/isort/docs/configuration/options.html
+line_length = 80
+multi_line_output = 3
+profile = "black"
+use_parentheses = true
+
+[tool.pytest.ini_options]
+# addopts = "-s -vvv --cov moniven --cov-fail-under=95"
+addopts = "-s -vvv"
+testpaths = [
+    "tests",
+]
+markers = [
+    "unit: run unit tests",
+    "sociable: run functions interaction tests",
+    "acceptance: run acceptance tests",
+]
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
