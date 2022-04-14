@@ -39,7 +39,7 @@ moniven-cli = "moniven.__main__:main"
 [tool.mypy]
 check_untyped_defs = true
 ignore_errors = false
-ignore_missing_imports = false
+ignore_missing_imports = true
 strict_optional = true
 warn_unused_ignores = false
 warn_redundant_casts = true

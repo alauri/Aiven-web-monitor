@@ -17,12 +17,12 @@ def static() -> str:
     Returns:
         The absolute path of the static folder.
     """
-    fld = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+    fld = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
     return fld
 
 
 @pytest.fixture(autouse=True)
-def wrap_every_test() -> None:
+def wrap_every_test():
     """Wrap every single test with action that must be occur before and after.
 
     Returns:

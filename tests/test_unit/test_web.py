@@ -16,11 +16,13 @@ def test_read(static, mocker):
     Returns:
         Nothing
     """
-    target = open(os.path.join(static, 'site1.html'), 'r').read()
-    mocker.patch('urllib3.PoolManager.request',
-                 return_value=type("A", (), {"data": target})())
+    target = open(os.path.join(static, "site.html"), "r").read()
+    mocker.patch(
+        "urllib3.PoolManager.request",
+        return_value=type("A", (), {"data": target})(),
+    )
 
-    content = web.read('http://www.website1.org')
+    content = web.read("http://www.website.org")
 
     assert content == target
 
@@ -31,7 +33,7 @@ def test_parse(static):
     Returns:
         Nothing
     """
-    content = open(os.path.join(static, 'site1.html'), 'r').read()
-    res = web.parse(content, "main-title")    
+    content = open(os.path.join(static, "site.html"), "r").read()
+    res = web.parse(content, "main-title")
 
     assert res == "The main title of the page"

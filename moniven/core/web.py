@@ -3,14 +3,16 @@
 
 """Utility for HTML pages."""
 
-# Python imports
 from html.parser import HTMLParser
 
+# Python imports
+from typing import Optional
+
 import urllib3
+import urllib3.exceptions
 
 
 class WebsiteParser(HTMLParser):
-
     def __init__(self, target, *args, **kwargs):
         self._target = target
         self._found = False
@@ -69,7 +71,7 @@ class WebsiteParser(HTMLParser):
         self._data = new
 
 
-def read(url: str) -> str:
+def read(url: str) -> Optional[str]:
     """Retrieve the website content.
 
     Args:
@@ -79,12 +81,15 @@ def read(url: str) -> str:
         The website's content page.
     """
     http = urllib3.PoolManager()
-    r = http.request('GET', url)
-    return r.data
+    try:
+        response = http.request("GET", url, retries=False)
+        response = response.data
+    except urllib3.exceptions.NewConnectionError:
+        response = None
+    return response
 
 
-def parse(content: str,
-          target: str) -> str:
+def parse(content: str, target: str) -> str:
     """Parse a HTML content and extract information about a given target.
 
     The target the label of a specific attribute within the content. If multiple

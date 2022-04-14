@@ -33,8 +33,8 @@ or even the dev dependencies with:
 Moniven is a *Command Line Interface (CLI)* developed with
 [Click](https://click.palletsprojects.com/) and that exposes below commands:
 
- - *producer*: start a Kafka producer;
- - *consumer*: start a Kafka consumer.
+ - *moniven-cli produce*: start the producer;
+ - *moniven-cli consume*: start the consumer.
 
 
 ## Run tests
