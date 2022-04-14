@@ -2,6 +2,7 @@
 source = moniven
 omit =
     */tests/*
+    moniven/__main__.py
 
 [report]
 skip_covered = True

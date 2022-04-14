@@ -28,6 +28,15 @@ or even the dev dependencies with:
     $ make install-dev
 
 
+## Execute
+
+Moniven is a *Command Line Interface (CLI)* developed with
+[Click](https://click.palletsprojects.com/) and that exposes below commands:
+
+ - *producer*: start a Kafka producer;
+ - *consumer*: start a Kafka consumer.
+
+
 ## Run tests
 
 Run tests locally with:
