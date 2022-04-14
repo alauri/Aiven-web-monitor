@@ -14,11 +14,11 @@ def cli():
     click.echo(f"Hello, Moniven!")
 
 
-@cli.command("produce")
-def producer():
+@cli.command()
+def produce():
     click.echo(f"I'm the producer")
 
 
-@cli.command("consume")
-def consumer():
+@cli.command()
+def consume():
     click.echo(f"I'm the consumer")

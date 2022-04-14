@@ -31,6 +31,7 @@ Sphinx = "^4.5.0"
 sphinx-rtd-theme = "^1.0.0"
 sphinxcontrib-napoleon = "^0.7"
 sphinx-autodoc-typehints = "^1.18.1"
+pytest-mock = "^3.7.0"
 
 [tool.poetry.scripts]
 moniven-cli = "moniven.__main__:main"
