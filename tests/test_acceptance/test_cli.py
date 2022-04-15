@@ -30,11 +30,20 @@ def test_cli():
 
 @pytest.mark.acceptance
 def test_produce(static, mocker):
+    # Mock urllib3
     sources = os.path.join(static, "sources.ini")
     target = open(os.path.join(static, "site.html"), "r").read()
     mocker.patch(
         "urllib3.PoolManager.request",
-        return_value=type("A", (), {"data": target})(),
+        return_value=type("Parser", (), {"data": target})(),
+    )
+
+    # Mock Kafka Producer
+    mocker.patch(
+        "kafka.KafkaProducer",
+        return_value=type(
+            "Producer", (), {"send": lambda t, d: True, "close": lambda: True}
+        ),
     )
 
     runner = CliRunner()
@@ -42,25 +51,32 @@ def test_produce(static, mocker):
 
     assert result.exit_code == 0
     assert result.output == (
-        "['The main title of the page', "
-        "'The main title of the page', "
-        "'The main title of the page']\n"
+        "Data sent to topic 'topic-newpapers'\n"
+        "Data sent to topic 'topic-newpapers'\n"
+        "Data sent to topic 'topic-newpapers'\n"
     )
 
 
 @pytest.mark.acceptance
 def test_produce_error(static, mocker):
+    # Mock urllib3
     sources = os.path.join(static, "sources.ini")
     mocker.patch(
         "urllib3.PoolManager.request",
         side_effect=NewConnectionError(None, "Generic Error"),
     )
 
+    # Mock Kafka Producer
+    mocker.patch(
+        "kafka.KafkaProducer",
+        return_value=type("Producer", (), {"close": lambda: True}),
+    )
+
     runner = CliRunner()
     result = runner.invoke(cli.cli, ["produce", f"--sources={sources}"])
 
     assert result.exit_code == 0
-    assert result.output == "[]\n"
+    assert result.output == ""
 
 
 @pytest.mark.acceptance

@@ -6,10 +6,14 @@
 # Python imports
 import os
 
+# PyTest imports
+import pytest
+
 # Project imports
 from moniven.core import web
 
 
+@pytest.mark.unit
 def test_read(static, mocker):
     """Test the read website content routine.
 
@@ -27,6 +31,7 @@ def test_read(static, mocker):
     assert content == target
 
 
+@pytest.mark.unit
 def test_parse(static):
     """Test the HTML parser routine.
 

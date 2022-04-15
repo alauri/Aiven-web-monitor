@@ -14,6 +14,9 @@ from typing import Optional, Union
 # Click imports
 import click
 
+# Kafka imports
+import kafka
+
 # Project imports
 from moniven.core import web
 
@@ -27,7 +30,6 @@ def cli():
 @cli.command()
 @click.option(
     "--sources",
-    "-s",
     default=os.path.join(os.path.dirname(__file__), "..", "sources.ini"),
     help="file containing the list of URLs to parse",
 )
@@ -35,42 +37,53 @@ def cli():
 @click.option(
     "--delay", default=60000.0, help="time to wait before the next iteration"
 )
-def produce(sources: str, loop: bool, delay: float):
+@click.option("--server", default="localhost:9092", help="the Kafka server")
+@click.option(
+    "--topic",
+    default="topic-newpapers",
+    help="the Kafka topic where to send the data",
+)
+def produce(sources: str, loop: bool, delay: float, server: str, topic: str):
     """Crawl a list of URLs.
 
     For each URL's content search for a specific target within the content of
     each.
     """
+    # Get the list of URLs to crawl from the configuration file
     config = configparser.ConfigParser()
     config.read(sources)
 
     urls = config["sources"]["urls"].replace("\n", "").split(",")
     urls = [url for url in urls if url]
 
-    while True:
-        result = []
+    # Initialize the producer
+    producer = kafka.KafkaProducer(bootstrap_servers=[server])
 
+    while True:
         # For each URL to parse get its content and search for a specific tag
         # The Kafka producer will send all the data found the a remote Kafka
         # cluster
         for url in urls:
             cont: Optional[Union[str, bytes]] = web.read(url)
+
+            # No data retieved, continue
             if cont is None:
                 continue
             cont = cont.decode("utf-8") if isinstance(cont, bytes) else cont
 
-            # Search for data
+            # Search for data and send it to Kafka
             data = web.parse(cont, "main-title")
             if data:
-                result.append(data)
-
-        # TODO: use a Kafka producer to send data
-        click.echo(result)
+                _ = producer.send(topic, data.encode("utf-8"))
+                click.echo(f"Data sent to topic '{topic}'")
 
         # Check the loop. If true, execute the producer periodically
         if not loop:
             break
         time.sleep(delay)
+
+    # Close Producer
+    producer.close()
 
 
 @cli.command()

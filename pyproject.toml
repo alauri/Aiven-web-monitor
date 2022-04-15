@@ -18,6 +18,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.10"
 click = "^8.1.2"
+kafka-python = "^2.0.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.1"
