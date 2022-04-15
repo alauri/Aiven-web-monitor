@@ -31,8 +31,8 @@ def test_read(static, mocker):
     content, info = web.read("http://www.website.org")
 
     assert (
-        f"{info}:{content}"
-        == f"http://www.website.org:200:0:00:00.12345:{target}"
+        f"{info},{content}"
+        == f"http://www.website.org,200,0:00:00.12345,{target}"
     )
 
 
@@ -58,8 +58,8 @@ def test_read_error(mocker):
     content, info = web.read("http://www.website.org")
 
     assert (
-        f"{info}:{content}"
-        == "http://www.website.org:404:0:00:00.12345:Not Found"
+        f"{info},{content}"
+        == "http://www.website.org,404,0:00:00.12345,Not Found"
     )
 
 

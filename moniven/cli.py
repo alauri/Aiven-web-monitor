@@ -13,6 +13,10 @@ import click
 
 # Kafka imports
 import kafka
+import psycopg2
+
+# Psycopg2 imports
+import psycopg2.extras
 
 # Project imports
 from moniven.core import web
@@ -66,7 +70,7 @@ def produce(sources: str, loop: bool, delay: float, server: str, topic: str):
             # Search for data and send it to Kafka
             data = web.parse(cont, "main-title")
             if data:
-                data = f"{info}:{data}"
+                data = f"{info},{data}"
                 _ = producer.send(topic, data.encode("utf-8"))
                 click.echo(f"Data sent to topic '{topic}'")
 
@@ -97,16 +101,39 @@ def consume(loop: bool, delay: float, server: str, topic: str):
     each.
     """
     # Initialize the Kafka consumer
-    consumer = kafka.KafkaConsumer(topics=topic,
-                                   bootstrap_servers=[server])
+    consumer = kafka.KafkaConsumer(topics=topic, bootstrap_servers=[server])
+
+    # Connection database initialization
+    conn = psycopg2.connect(
+        dbname="testdb",
+        host="localhost",
+        user="testuser",
+        passwork="testpwd",
+        port=5432,
+    )
 
     while True:
+        # Get a fresh cursor
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
         # Iter over all new messages
         for message in consumer:
-            click.echo(message.value)
+            # Execute a query
+            url, scode, texec, data = message.value.split(",")
+            cur.execute(
+                "INSERT INTO metrics VALUES(%s, %s, %s, %s)",
+                (url, scode, texec, data),
+            )
+            click.echo(f"Stored data: {data}")
+
+        # Commit records
+        conn.commit()
+        click.echo("All records have been saved")
 
         # Check the loop. If true, execute the producer periodically
         if not loop:
             break
         time.sleep(delay)
+
+    # Close Consumer
     consumer.close()

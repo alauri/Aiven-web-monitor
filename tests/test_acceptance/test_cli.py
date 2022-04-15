@@ -55,8 +55,8 @@ def test_produce(static, mocker, producer):
 
 @pytest.mark.acceptance
 def test_produce_error(static, mocker, producer):
-    # Mock urllib3
-    sources = os.path.join(static, "sources.ini")
+
+    # Mock section
     mocker.patch(
         "requests.get",
         return_value=type(
@@ -69,10 +69,9 @@ def test_produce_error(static, mocker, producer):
             },
         ),
     )
-
-    # Mock Kafka Producer
     mocker.patch("kafka.KafkaProducer", return_value=producer)
 
+    sources = os.path.join(static, "sources.ini")
     runner = CliRunner()
     result = runner.invoke(cli.cli, ["produce", f"--sources={sources}"])
 
@@ -83,14 +82,16 @@ def test_produce_error(static, mocker, producer):
 @pytest.mark.acceptance
 def test_consume(mocker, consumer):
 
-    # Mock Kafka Producer
+    # Mock section
     mocker.patch("kafka.KafkaConsumer", return_value=consumer)
+    mocker.patch("psycopg2.connect")
 
     runner = CliRunner()
     result = runner.invoke(cli.cli, ["consume"])
 
     assert result.exit_code == 0
     assert result.output == (
-        "http://www.website.org:200:0:00:00.12345:The main title\n"
-        "http://www.website.org:404:0:00:00.12345:Not Found\n"
+        "Stored data: Main title\n"
+        "Stored data: Not Found\n"
+        "All records have been saved\n"
     )

@@ -81,7 +81,7 @@ def read(url: str) -> Tuple[str, str]:
     success = 200
 
     resp = requests.get(url)
-    info = f"{url}:{resp.status_code}:{resp.elapsed}"
+    info = f"{url},{resp.status_code},{resp.elapsed}"
     if resp.status_code != success:
         data = resp.reason
     else:

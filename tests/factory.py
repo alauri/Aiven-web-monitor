@@ -2,13 +2,22 @@
 
 """Factory objects for tests."""
 
+
 class Messages:
     """A predefined object to emulate messages read by a Kafka Consumer mock."""
 
     def __init__(self):
         self._messages = [
-            type("Message", (), {"value": "http://www.website.org:200:0:00:00.12345:The main title"}),
-            type("Message", (), {"value": "http://www.website.org:404:0:00:00.12345:Not Found"}),
+            type(
+                "Message",
+                (),
+                {"value": "http://www.website.org,200,0:00:00.123,Main title"},
+            ),
+            type(
+                "Message",
+                (),
+                {"value": "http://www.website.org,404,0:00:00.12345,Not Found"},
+            ),
         ]
         self._curr = 0
 
