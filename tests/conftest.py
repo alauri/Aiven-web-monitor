@@ -3,7 +3,6 @@
 """Test suite configuration."""
 
 
-# Python imports
 import os
 
 # PyTest imports

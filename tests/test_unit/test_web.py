@@ -3,7 +3,6 @@
 """Test suite for unit tests."""
 
 
-# Python imports
 import os
 
 # PyTest imports
@@ -22,13 +21,46 @@ def test_read(static, mocker):
     """
     target = open(os.path.join(static, "site.html"), "r").read()
     mocker.patch(
-        "urllib3.PoolManager.request",
-        return_value=type("A", (), {"data": target})(),
+        "requests.get",
+        return_value=type(
+            "Requests",
+            (),
+            {"text": target, "status_code": 200, "elapsed": "0:00:00.12345"},
+        ),
+    )
+    content, info = web.read("http://www.website.org")
+
+    assert (
+        f"{info}:{content}"
+        == f"http://www.website.org:200:0:00:00.12345:{target}"
     )
 
-    content = web.read("http://www.website.org")
 
-    assert content == target
+@pytest.mark.unit
+def test_read_error(mocker):
+    """Test the read routine when an error occur.
+
+    Returns:
+        Nothing
+    """
+    mocker.patch(
+        "requests.get",
+        return_value=type(
+            "Requests",
+            (),
+            {
+                "reason": "Not Found",
+                "status_code": 404,
+                "elapsed": "0:00:00.12345",
+            },
+        ),
+    )
+    content, info = web.read("http://www.website.org")
+
+    assert (
+        f"{info}:{content}"
+        == "http://www.website.org:404:0:00:00.12345:Not Found"
+    )
 
 
 @pytest.mark.unit

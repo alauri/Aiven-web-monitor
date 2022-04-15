@@ -12,9 +12,6 @@ import pytest
 # Click imports
 from click.testing import CliRunner
 
-# Python imports
-from urllib3.exceptions import NewConnectionError
-
 # Project imports
 from moniven import cli
 
@@ -34,8 +31,12 @@ def test_produce(static, mocker):
     sources = os.path.join(static, "sources.ini")
     target = open(os.path.join(static, "site.html"), "r").read()
     mocker.patch(
-        "urllib3.PoolManager.request",
-        return_value=type("Parser", (), {"data": target})(),
+        "requests.get",
+        return_value=type(
+            "Requests",
+            (),
+            {"text": target, "status_code": 200, "elapsed": "0:00:00.12345"},
+        ),
     )
 
     # Mock Kafka Producer
@@ -62,8 +63,16 @@ def test_produce_error(static, mocker):
     # Mock urllib3
     sources = os.path.join(static, "sources.ini")
     mocker.patch(
-        "urllib3.PoolManager.request",
-        side_effect=NewConnectionError(None, "Generic Error"),
+        "requests.get",
+        return_value=type(
+            "Requests",
+            (),
+            {
+                "reason": "Not Found",
+                "status_code": 404,
+                "elapsed": "0:00:00.12345",
+            },
+        ),
     )
 
     # Mock Kafka Producer

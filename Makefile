@@ -1,5 +1,6 @@
 RM=rm
 PIP=pip
+MYPY=mypy
 
 POETRY=poetry
 
@@ -46,14 +47,14 @@ lint:
 	$(POETRY) run black moniven
 	$(POETRY) run isort moniven
 	$(POETRY) run flake8 moniven
-	$(POETRY) run mypy moniven
+	$(POETRY) run $(MYPY) --install-types --non-interactive moniven
 
 
 lint-dev:
 	$(POETRY) run black tests
 	$(POETRY) run isort tests
 	$(POETRY) run flake8 tests
-	$(POETRY) run mypy tests
+	$(POETRY) run $(MYPY) --install-types --non-interactive tests
 
 
 lint-all:

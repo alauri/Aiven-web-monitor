@@ -8,9 +8,6 @@ import configparser
 import os
 import time
 
-# Python imports
-from typing import Optional, Union
-
 # Click imports
 import click
 
@@ -64,16 +61,12 @@ def produce(sources: str, loop: bool, delay: float, server: str, topic: str):
         # The Kafka producer will send all the data found the a remote Kafka
         # cluster
         for url in urls:
-            cont: Optional[Union[str, bytes]] = web.read(url)
-
-            # No data retieved, continue
-            if cont is None:
-                continue
-            cont = cont.decode("utf-8") if isinstance(cont, bytes) else cont
+            cont, info = web.read(url)
 
             # Search for data and send it to Kafka
             data = web.parse(cont, "main-title")
             if data:
+                data = f"{info}:{data}"
                 _ = producer.send(topic, data.encode("utf-8"))
                 click.echo(f"Data sent to topic '{topic}'")
 

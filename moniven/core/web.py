@@ -3,13 +3,11 @@
 
 """Utility for HTML pages."""
 
+
 from html.parser import HTMLParser
+from typing import Tuple
 
-# Python imports
-from typing import Optional
-
-import urllib3
-import urllib3.exceptions
+import requests
 
 
 class WebsiteParser(HTMLParser):
@@ -71,7 +69,7 @@ class WebsiteParser(HTMLParser):
         self._data = new
 
 
-def read(url: str) -> Optional[str]:
+def read(url: str) -> Tuple[str, str]:
     """Retrieve the website content.
 
     Args:
@@ -80,13 +78,15 @@ def read(url: str) -> Optional[str]:
     Returns:
         The website's content page.
     """
-    http = urllib3.PoolManager()
-    try:
-        response = http.request("GET", url, retries=False)
-        response = response.data
-    except urllib3.exceptions.NewConnectionError:
-        response = None
-    return response
+    success = 200
+
+    resp = requests.get(url)
+    info = f"{url}:{resp.status_code}:{resp.elapsed}"
+    if resp.status_code != success:
+        data = resp.reason
+    else:
+        data = resp.text
+    return data, info
 
 
 def parse(content: str, target: str) -> str:
