@@ -8,6 +8,9 @@ import os
 # PyTest imports
 import pytest
 
+# Project imports
+from tests import factory
+
 
 @pytest.fixture(scope="session")
 def static() -> str:
@@ -18,6 +21,26 @@ def static() -> str:
     """
     fld = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
     return fld
+
+
+@pytest.fixture(scope="module")
+def producer() -> factory.Producer:
+    """Emulate a Kafka Producer as a mock for testing purposes.
+
+    Returns:
+        A Producer instance.
+    """
+    return factory.Producer()
+
+
+@pytest.fixture(scope="module")
+def consumer() -> factory.Consumer:
+    """Emulate a Kafka Consumer as a mock for testing purposes.
+
+    Returns:
+        A Consumer instance.
+    """
+    return factory.Consumer()
 
 
 @pytest.fixture(autouse=True)

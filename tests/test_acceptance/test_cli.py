@@ -26,7 +26,7 @@ def test_cli():
 
 
 @pytest.mark.acceptance
-def test_produce(static, mocker):
+def test_produce(static, mocker, producer):
     # Mock urllib3
     sources = os.path.join(static, "sources.ini")
     target = open(os.path.join(static, "site.html"), "r").read()
@@ -40,12 +40,7 @@ def test_produce(static, mocker):
     )
 
     # Mock Kafka Producer
-    mocker.patch(
-        "kafka.KafkaProducer",
-        return_value=type(
-            "Producer", (), {"send": lambda t, d: True, "close": lambda: True}
-        ),
-    )
+    mocker.patch("kafka.KafkaProducer", return_value=producer)
 
     runner = CliRunner()
     result = runner.invoke(cli.cli, ["produce", f"--sources={sources}"])
@@ -59,7 +54,7 @@ def test_produce(static, mocker):
 
 
 @pytest.mark.acceptance
-def test_produce_error(static, mocker):
+def test_produce_error(static, mocker, producer):
     # Mock urllib3
     sources = os.path.join(static, "sources.ini")
     mocker.patch(
@@ -76,10 +71,7 @@ def test_produce_error(static, mocker):
     )
 
     # Mock Kafka Producer
-    mocker.patch(
-        "kafka.KafkaProducer",
-        return_value=type("Producer", (), {"close": lambda: True}),
-    )
+    mocker.patch("kafka.KafkaProducer", return_value=producer)
 
     runner = CliRunner()
     result = runner.invoke(cli.cli, ["produce", f"--sources={sources}"])
@@ -89,9 +81,16 @@ def test_produce_error(static, mocker):
 
 
 @pytest.mark.acceptance
-def test_consume():
+def test_consume(mocker, consumer):
+
+    # Mock Kafka Producer
+    mocker.patch("kafka.KafkaConsumer", return_value=consumer)
+
     runner = CliRunner()
     result = runner.invoke(cli.cli, ["consume"])
 
     assert result.exit_code == 0
-    assert "I'm the consumer" in result.output
+    assert result.output == (
+        "http://www.website.org:200:0:00:00.12345:The main title\n"
+        "http://www.website.org:404:0:00:00.12345:Not Found\n"
+    )

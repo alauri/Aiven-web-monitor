@@ -80,5 +80,33 @@ def produce(sources: str, loop: bool, delay: float, server: str, topic: str):
 
 
 @cli.command()
-def consume():
-    click.echo("I'm the consumer")
+@click.option("--loop", default=False, help="run the producer in loop")
+@click.option(
+    "--delay", default=60000.0, help="time to wait before the next iteration"
+)
+@click.option("--server", default="localhost:9092", help="the Kafka server")
+@click.option(
+    "--topic",
+    default="topic-newpapers",
+    help="the Kafka topic where to send the data",
+)
+def consume(loop: bool, delay: float, server: str, topic: str):
+    """Crawl a list of URLs.
+
+    For each URL's content search for a specific target within the content of
+    each.
+    """
+    # Initialize the Kafka consumer
+    consumer = kafka.KafkaConsumer(topics=topic,
+                                   bootstrap_servers=[server])
+
+    while True:
+        # Iter over all new messages
+        for message in consumer:
+            click.echo(message.value)
+
+        # Check the loop. If true, execute the producer periodically
+        if not loop:
+            break
+        time.sleep(delay)
+    consumer.close()
