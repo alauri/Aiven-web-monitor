@@ -1,10 +1,9 @@
 RM=rm
 PIP=pip
 MYPY=mypy
-
 POETRY=poetry
-
 PYTEST=pytest -s -vv
+DOCKER-COMPOSE=docker-compose
 
 
 all: help
@@ -68,6 +67,14 @@ test:
 
 test-all:
 	$(POETRY) run $(PYTEST)
+
+
+services-up:
+	$(DOCKER-COMPOSE) up -d
+
+
+services-down:
+	$(DOCKER-COMPOSE) down
 
 
 clean:

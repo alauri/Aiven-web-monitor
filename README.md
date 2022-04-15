@@ -10,7 +10,7 @@ editing the file *sources.ini*.
 ## Requirements and configuration
 
 This project has been tested against *Python3.9* and *Python3.10* and developed
-by using [Poetry](https://python-poetry.org/) as Python package manager.
+by using Poetry as Python package manager.
 
 To manage the project locally you can use *Makefile*:
 
@@ -30,8 +30,8 @@ or even the dev dependencies with:
 
 ## Execute
 
-Moniven is a *Command Line Interface (CLI)* developed with
-[Click](https://click.palletsprojects.com/) and that exposes below commands:
+Moniven is a *Command Line Interface (CLI)* developed with Click and that
+exposes below commands:
 
  - *moniven-cli produce*: start the producer;
  - *moniven-cli consume*: start the consumer.
@@ -43,9 +43,9 @@ Run tests locally with:
 
     $ make test
 
-The tests suite has been developed by using [Pytest](https://docs.pytest.org/)
-and supports markers. The command above runs *unit tests* only by default, but,
-if you want to run all of them, use the following command:
+The tests suite has been developed by using Pytest and supports markers. The
+command above runs *unit tests* only by default, but, if you want to run all of
+them, use the following command:
 
     $ make test-all
 
@@ -65,6 +65,19 @@ markers you want to run from the following list:
 ### Test automation and coverage
 
 The project supports tests automation against multiple Python versions using
-[Tox](https://tox.wiki/en/latest/).
+Tox.
 
-It also supports test suite coverage with a threshold of 95%.
+It also supports test suite coverage with a threshold of 95%, just run *tox*.
+
+
+## Start services
+
+Services can be started locally by using Docker.
+
+To start services run:
+
+    $ make services-up
+
+and to stop run:
+
+    $ make services-down
