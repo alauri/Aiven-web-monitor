@@ -8,17 +8,11 @@ import configparser
 import os
 import time
 
-# Click imports
 import click
-
-# Kafka imports
 import kafka
 import psycopg2
-
-# Psycopg2 imports
 import psycopg2.extras
 
-# Project imports
 from moniven.core import web
 
 

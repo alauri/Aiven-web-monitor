@@ -14,6 +14,8 @@ help:
 	@echo "update               - Update dependencies and write lock file."
 	@echo "test                 - Run UnitTests."
 	@echo " test-all            - Run all tests (it might take a while)."
+	@echo "services             - Start services locally with Docker."
+	@echo " services-down       - Stop Docker services."
 	@echo "doc                  - Build doc locally (HTML format)."
 	@echo "lint                 - Run codecheckes."
 	@echo " lint-dev            - Run tests checkes."
@@ -69,7 +71,7 @@ test-all:
 	$(POETRY) run $(PYTEST)
 
 
-services-up:
+services:
 	$(DOCKER-COMPOSE) up -d
 
 

@@ -6,13 +6,9 @@
 
 import os
 
-# PyTest imports
 import pytest
-
-# Click imports
 from click.testing import CliRunner
 
-# Project imports
 from moniven import cli
 
 

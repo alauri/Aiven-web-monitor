@@ -4,7 +4,6 @@
 """The project entry point."""
 
 
-# Project imports
 from moniven import cli
 
 

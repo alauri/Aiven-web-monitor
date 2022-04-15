@@ -83,10 +83,10 @@ def read(url: str) -> Tuple[str, str]:
     resp = requests.get(url)
     info = f"{url},{resp.status_code},{resp.elapsed}"
     if resp.status_code != success:
-        data = resp.reason
+        content = resp.reason
     else:
-        data = resp.text.replace(",", "")
-    return data, info
+        content = resp.text.replace(",", "")
+    return content, info
 
 
 def parse(content: str, target: str) -> str:

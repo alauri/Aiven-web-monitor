@@ -5,10 +5,8 @@
 
 import os
 
-# PyTest imports
 import pytest
 
-# Project imports
 from moniven.core import web
 
 
