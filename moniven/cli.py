@@ -54,8 +54,10 @@ def produce(sources: str, loop: bool, delay: float, server: str, topic: str):
     config = configparser.ConfigParser()
     config.read(sources)
 
-    urls = config["sources"]["urls"].replace("\n", "").split(",")
-    urls = [url for url in urls if url]
+    # Get the list of urls and the related target to search for within the
+    # content
+    labels = config["sources"]["labels"].replace("\n", "").split(",")
+    labels = [label for label in labels if label]
 
     # Initialize the producer
     producer = kafka.KafkaProducer(bootstrap_servers=[server])
@@ -64,11 +66,11 @@ def produce(sources: str, loop: bool, delay: float, server: str, topic: str):
         # For each URL to parse get its content and search for a specific tag
         # The Kafka producer will send all the data found the a remote Kafka
         # cluster
-        for url in urls:
-            cont, info = web.read(url)
+        for label in labels:
+            cont, info = web.read(config[label]["url"])
 
             # Search for data and send it to Kafka
-            data = web.parse(cont, "main-title")
+            data = web.parse(cont, config[label]["target"])
             if data:
                 data = f"{info},{data}"
                 _ = producer.send(topic, data.encode("utf-8"))

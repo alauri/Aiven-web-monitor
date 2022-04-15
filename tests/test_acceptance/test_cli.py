@@ -29,14 +29,43 @@ def test_cli():
 def test_produce(static, mocker, producer):
     # Mock urllib3
     sources = os.path.join(static, "sources.ini")
-    target = open(os.path.join(static, "site.html"), "r").read()
     mocker.patch(
         "requests.get",
-        return_value=type(
-            "Requests",
-            (),
-            {"text": target, "status_code": 200, "elapsed": "0:00:00.12345"},
-        ),
+        side_effect=[
+            type(
+                "Requests",
+                (),
+                {
+                    "text": open(
+                        os.path.join(static, "site1.html"), "r"
+                    ).read(),
+                    "status_code": 200,
+                    "elapsed": "0:00:00.12345",
+                },
+            ),
+            type(
+                "Requests",
+                (),
+                {
+                    "text": open(
+                        os.path.join(static, "site2.html"), "r"
+                    ).read(),
+                    "status_code": 200,
+                    "elapsed": "0:00:00.12345",
+                },
+            ),
+            type(
+                "Requests",
+                (),
+                {
+                    "text": open(
+                        os.path.join(static, "site3.html"), "r"
+                    ).read(),
+                    "status_code": 200,
+                    "elapsed": "0:00:00.12345",
+                },
+            ),
+        ],
     )
 
     # Mock Kafka Producer
@@ -91,6 +120,5 @@ def test_consume(mocker, consumer):
 
     assert result.exit_code == 0
     assert result.output == (
-        "Stored data: Main title\n"
-        "Stored data: Not Found\n"
+        "Stored data: Main title\n" "Stored data: Not Found\n"
     )

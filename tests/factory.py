@@ -16,7 +16,7 @@ class Messages:
             type(
                 "Message",
                 (),
-                {"value": b"http://www.website.org,404,0:00:00.12345,Not Found"},
+                {"value": b"http://www.website.org,404,0:00:00.123,Not Found"},
             ),
         ]
         self._curr = 0

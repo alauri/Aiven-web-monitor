@@ -19,7 +19,7 @@ def test_read(static, mocker):
     Returns:
         Nothing
     """
-    target = open(os.path.join(static, "site.html"), "r").read()
+    target = open(os.path.join(static, "site1.html"), "r").read()
     mocker.patch(
         "requests.get",
         return_value=type(
@@ -28,11 +28,11 @@ def test_read(static, mocker):
             {"text": target, "status_code": 200, "elapsed": "0:00:00.12345"},
         ),
     )
-    content, info = web.read("http://www.website.org")
+    content, info = web.read("http://www.website1.org")
 
     assert (
         f"{info},{content}"
-        == f"http://www.website.org,200,0:00:00.12345,{target}"
+        == f"http://www.website1.org,200,0:00:00.12345,{target}"
     )
 
 
@@ -55,11 +55,11 @@ def test_read_error(mocker):
             },
         ),
     )
-    content, info = web.read("http://www.website.org")
+    content, info = web.read("http://www.website1.org")
 
     assert (
         f"{info},{content}"
-        == "http://www.website.org,404,0:00:00.12345,Not Found"
+        == "http://www.website1.org,404,0:00:00.12345,Not Found"
     )
 
 
@@ -70,7 +70,7 @@ def test_parse(static):
     Returns:
         Nothing
     """
-    content = open(os.path.join(static, "site.html"), "r").read()
-    res = web.parse(content, "main-title")
+    content = open(os.path.join(static, "site1.html"), "r").read()
+    res = web.parse(content, "main-title1")
 
     assert res == "The main title of the page"
