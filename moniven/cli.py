@@ -41,7 +41,7 @@ def cli():
 @click.option("--server", default="localhost:9092", help="the Kafka server")
 @click.option(
     "--topic",
-    default="topic-newpapers",
+    default="topic-papers",
     help="the Kafka topic where to send the data",
 )
 def produce(sources: str, loop: bool, delay: float, server: str, topic: str):
@@ -84,56 +84,53 @@ def produce(sources: str, loop: bool, delay: float, server: str, topic: str):
 
 
 @cli.command()
-@click.option("--loop", default=False, help="run the producer in loop")
-@click.option(
-    "--delay", default=60000.0, help="time to wait before the next iteration"
-)
 @click.option("--server", default="localhost:9092", help="the Kafka server")
 @click.option(
     "--topic",
-    default="topic-newpapers",
+    default="topic-papers",
     help="the Kafka topic where to send the data",
 )
-def consume(loop: bool, delay: float, server: str, topic: str):
-    """Crawl a list of URLs.
+@click.option("--dbhost", default="localhost", help="the database host")
+@click.option("--dbuser", default="postgres", help="the database user")
+@click.option("--dbpass", default="postgres", help="the database pass")
+@click.option("--dbport", default=5438, help="the database port")
+def consume(
+    server: str,
+    topic: str,
+    dbhost: str,
+    dbuser: str,
+    dbpass: str,
+    dbport: int,
+):
+    """Consume messages from Kafka topic.
 
-    For each URL's content search for a specific target within the content of
-    each.
+    The consumer retrieves messages from a Kafka topic and stores the
+    information within a Postgres database.
     """
     # Initialize the Kafka consumer
-    consumer = kafka.KafkaConsumer(topics=topic, bootstrap_servers=[server])
+    consumer = kafka.KafkaConsumer(topic, bootstrap_servers=[server])
 
     # Connection database initialization
     conn = psycopg2.connect(
-        dbname="testdb",
-        host="localhost",
-        user="testuser",
-        passwork="testpwd",
-        port=5432,
+        host=dbhost, user=dbuser, password=dbpass, port=dbport
     )
 
-    while True:
-        # Get a fresh cursor
-        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    # Get a fresh cursor
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
+    try:
         # Iter over all new messages
         for message in consumer:
             # Execute a query
-            url, scode, texec, data = message.value.split(",")
+            url, scode, texec, data = message.value.decode("utf-8").split(",")
             cur.execute(
-                "INSERT INTO metrics VALUES(%s, %s, %s, %s)",
+                "INSERT INTO metrics (url, scode, texec, data) VALUES (%s, %s, %s, %s)",  # noqa: E501
                 (url, scode, texec, data),
             )
+            conn.commit()
             click.echo(f"Stored data: {data}")
-
-        # Commit records
-        conn.commit()
-        click.echo("All records have been saved")
-
-        # Check the loop. If true, execute the producer periodically
-        if not loop:
-            break
-        time.sleep(delay)
+    except KeyboardInterrupt:
+        click.echo("Consumer interrupted")
 
     # Close Consumer
     consumer.close()

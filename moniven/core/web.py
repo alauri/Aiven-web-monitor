@@ -85,7 +85,7 @@ def read(url: str) -> Tuple[str, str]:
     if resp.status_code != success:
         data = resp.reason
     else:
-        data = resp.text
+        data = resp.text.replace(",", "")
     return data, info
 
 

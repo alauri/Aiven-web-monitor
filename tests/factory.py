@@ -11,12 +11,12 @@ class Messages:
             type(
                 "Message",
                 (),
-                {"value": "http://www.website.org,200,0:00:00.123,Main title"},
+                {"value": b"http://www.website.org,200,0:00:00.123,Main title"},
             ),
             type(
                 "Message",
                 (),
-                {"value": "http://www.website.org,404,0:00:00.12345,Not Found"},
+                {"value": b"http://www.website.org,404,0:00:00.12345,Not Found"},
             ),
         ]
         self._curr = 0

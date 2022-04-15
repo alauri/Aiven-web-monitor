@@ -47,9 +47,9 @@ def test_produce(static, mocker, producer):
 
     assert result.exit_code == 0
     assert result.output == (
-        "Data sent to topic 'topic-newpapers'\n"
-        "Data sent to topic 'topic-newpapers'\n"
-        "Data sent to topic 'topic-newpapers'\n"
+        "Data sent to topic 'topic-papers'\n"
+        "Data sent to topic 'topic-papers'\n"
+        "Data sent to topic 'topic-papers'\n"
     )
 
 
@@ -93,5 +93,4 @@ def test_consume(mocker, consumer):
     assert result.output == (
         "Stored data: Main title\n"
         "Stored data: Not Found\n"
-        "All records have been saved\n"
     )
