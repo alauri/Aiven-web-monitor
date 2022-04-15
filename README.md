@@ -83,7 +83,7 @@ Services can be started locally by using Docker.
 
 To start services run:
 
-    $ make services-up
+    $ make services
 
 and to stop run:
 
