@@ -12,6 +12,7 @@ help:
 	@echo "install              - Install production dependencies."
 	@echo " install-dev         - Install all dependencies."
 	@echo "update               - Update dependencies and write lock file."
+	@echo "build                - Build the project."
 	@echo "test                 - Run UnitTests."
 	@echo " test-all            - Run all tests (it might take a while)."
 	@echo "services             - Start services locally with Docker."
@@ -35,6 +36,10 @@ install-dev:
 
 update:
 	$(POETRY) update
+
+
+build:
+	$(POETRY) build
 
 
 # Manage local environment

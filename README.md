@@ -28,6 +28,13 @@ or even the dev dependencies with:
     $ make install-dev
 
 
+## Build as a library
+
+If needed, the project can also be built as a Python library:
+
+    $ make build
+
+
 ## Execute
 
 Moniven is a *Command Line Interface (CLI)* developed with Click and that
