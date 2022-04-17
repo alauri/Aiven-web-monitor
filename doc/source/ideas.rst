@@ -13,3 +13,7 @@ use for each command. Something like:
 
 With these all the other flags for the other commands can be removed or used
 in different ways.
+
+Another idea would to improve the readability of the code would be to organize
+all the CLI commands in packages rather than to have all of them within a single
+Python module.
