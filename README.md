@@ -88,10 +88,9 @@ configuration; services can be started with Docker:
     $ make services-down
 
 
-## TODO
+## Additional ideas
 
-This is a very simple project, with a very basic project structure and
-configuration.
+In the meanwhile of the development I have had additional ideas that can be
+found under the page *ideas* of the documentation that can be built with:
 
-In the meanwhile of the development I have had additional ideas that I haven't
-had time to implement; these ideas can be found within the documentation.
+    $ make doc
