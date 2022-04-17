@@ -29,7 +29,7 @@ def cli():
     default=os.path.join(os.path.dirname(__file__), "..", "sources.ini"),
     help="file containing the list of URLs to parse",
 )
-@click.option("--loop", default=False, help="run the producer in loop")
+@click.option("--loop/--no-loop", default=False, help="run the producer in loop")
 @click.option(
     "--delay", default=60000.0, help="time to wait before the next iteration"
 )

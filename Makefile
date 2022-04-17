@@ -39,6 +39,7 @@ update:
 
 
 build:
+	$(RM) -rf dist
 	$(POETRY) build
 
 
