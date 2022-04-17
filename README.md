@@ -3,7 +3,7 @@
 This project is a web monitor developed by using Aiven's services.
 
 It checks the availability of a list of web sites specified within the file
-*sources.ini* and tries to extract the data of a scecific tag from their
+*sources.ini* and tries to extract the data of a specific tag from their
 contents; if found, the data are published to an Aiven Kafka topic by a
 producer and read by a consumer that also stores them onto an Aiven Postgres
 instance.
@@ -32,14 +32,15 @@ or development dependencies with:
 
 ## Build as a library
 
-If needed, the project can also be built as a Python library:
+If needed, the project can also be installed as a Python library:
 
-    $ make build
+     $ make build
+     $ pip install aiven-web-monitor-0.1.0.tar.gz
 
 
 ## Execute
 
-The project exposes a *Command Line Interface (CLI)* named **avnwm** developed
+The project exposes a *Command Line Interface (CLI)* named **avn-wm** developed
 with Click with the below commands:
 
  - *avn-wm produce*: start the producer;
@@ -80,8 +81,17 @@ It also supports test suite coverage with a threshold of 95%, just run *tox*.
 
 ## Start services
 
-*avmwm* can work locally for testing purposes with just the default
+*avm-wm* can work locally for testing purposes with just the default
 configuration; services can be started with Docker:
 
     $ make services
     $ make services-down
+
+
+## TODO
+
+This is a very simple project, with a very basic project structure and
+configuration.
+
+In the meanwhile of the development I have had additional ideas that I haven't
+had time to implement; these ideas can be found within the documentation.
