@@ -23,8 +23,10 @@ def test_cli():
 
 @pytest.mark.acceptance
 def test_produce(static, mocker, producer):
-    # Mock urllib3
-    sources = os.path.join(static, "sources.ini")
+
+    # Mock section
+    mocker.patch("kafka.KafkaProducer", return_value=producer)
+    mocker.patch("psycopg2.connect")
     mocker.patch(
         "requests.get",
         side_effect=[
@@ -64,11 +66,18 @@ def test_produce(static, mocker, producer):
         ],
     )
 
-    # Mock Kafka Producer
-    mocker.patch("kafka.KafkaProducer", return_value=producer)
-
     runner = CliRunner()
-    result = runner.invoke(cli.cli, ["produce", f"--sources={sources}"])
+    result = runner.invoke(
+        cli.cli,
+        [
+            "produce",
+            "--ssl",
+            f"--ca={os.path.join(static, 'ca.pem')}",
+            f"--cert={os.path.join(static, 'service.cert')}",
+            f"--key={os.path.join(static, 'service.key')}",
+            f"--sources={os.path.join(static, 'sources.ini')}",
+        ],
+    )
 
     assert result.exit_code == 0
     assert result.output == (
@@ -82,6 +91,8 @@ def test_produce(static, mocker, producer):
 def test_produce_error(static, mocker, producer):
 
     # Mock section
+    mocker.patch("kafka.KafkaProducer", return_value=producer)
+    mocker.patch("psycopg2.connect")
     mocker.patch(
         "requests.get",
         return_value=type(
@@ -94,7 +105,6 @@ def test_produce_error(static, mocker, producer):
             },
         ),
     )
-    mocker.patch("kafka.KafkaProducer", return_value=producer)
 
     sources = os.path.join(static, "sources.ini")
     runner = CliRunner()
@@ -105,16 +115,29 @@ def test_produce_error(static, mocker, producer):
 
 
 @pytest.mark.acceptance
-def test_consume(mocker, consumer):
+def test_consume(mocker, static, consumer):
 
     # Mock section
     mocker.patch("kafka.KafkaConsumer", return_value=consumer)
     mocker.patch("psycopg2.connect")
 
     runner = CliRunner()
-    result = runner.invoke(cli.cli, ["consume"])
+    result = runner.invoke(
+        cli.cli,
+        [
+            "consume",
+            "--ssl",
+            f"--ca={os.path.join(static, 'ca.pem')}",
+            f"--cert={os.path.join(static, 'service.cert')}",
+            f"--key={os.path.join(static, 'service.key')}",
+            "--dbname=testdb",
+            "--dbhost=localhost",
+            "--dbuser=test",
+            "--dbpass=test",
+            "--dbport=12345",
+            f"--dbschema={os.path.join(static, 'schema.sql')}",
+        ],
+    )
 
     assert result.exit_code == 0
-    assert result.output == (
-        "Stored data: Main title\n" "Stored data: Not Found\n"
-    )
+    assert result.output == "Stored data: Main title\nStored data: Not Found\n"

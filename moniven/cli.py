@@ -19,6 +19,7 @@ from moniven.core import web
 @click.group()
 def cli():
     """Main interface for Moniven."""
+
     pass
 
 
@@ -38,7 +39,25 @@ def cli():
     default="topic-papers",
     help="the Kafka topic where to send the data",
 )
-def produce(sources: str, loop: bool, delay: float, server: str, topic: str):
+@click.option(
+    "--ssl/--no-ssl", default=False, help="enable/disable SSL certificate"
+)
+@click.option("--ca", default=None, help="absolute path of file 'ca.pem'")
+@click.option(
+    "--cert", default=None, help="absolute path of file 'service.cert'"
+)
+@click.option("--key", default=None, help="absolute path of file 'service.key'")
+def produce(
+    sources: str,
+    loop: bool,
+    delay: float,
+    server: str,
+    topic: str,
+    ssl: bool,
+    ca: str,
+    cert: str,
+    key: str,
+):
     """Crawl a list of URLs.
 
     For each URL's content search for a specific target within the content of
@@ -54,7 +73,15 @@ def produce(sources: str, loop: bool, delay: float, server: str, topic: str):
     labels = [label for label in labels if label]
 
     # Initialize the producer
-    producer = kafka.KafkaProducer(bootstrap_servers=[server])
+    kwargs = {}
+
+    if ssl:
+        kwargs["security_protocol"] = "SSL"
+        kwargs["ssl_cafile"] = ca
+        kwargs["ssl_certfile"] = cert
+        kwargs["ssl_keyfile"] = key
+
+    producer = kafka.KafkaProducer(bootstrap_servers=[server], **kwargs)
 
     while True:
         # For each URL to parse get its content and search for a specific tag
@@ -86,17 +113,37 @@ def produce(sources: str, loop: bool, delay: float, server: str, topic: str):
     default="topic-papers",
     help="the Kafka topic where to send the data",
 )
+@click.option(
+    "--ssl/--no-ssl", default=False, help="enable/disable SSL certificate"
+)
+@click.option("--ca", default=None, help="absolute path of file 'ca.pem'")
+@click.option(
+    "--cert", default=None, help="absolute path of file 'service.cert'"
+)
+@click.option("--key", default=None, help="absolute path of file 'service.key'")
+@click.option("--dbname", default="postgres", help="the database name")
 @click.option("--dbhost", default="localhost", help="the database host")
 @click.option("--dbuser", default="postgres", help="the database user")
 @click.option("--dbpass", default="postgres", help="the database pass")
 @click.option("--dbport", default=5438, help="the database port")
+@click.option(
+    "--dbschema",
+    default=os.path.join(os.path.dirname(__file__), "..", "sql", "schema.sql"),
+    help="the schema to initialize the database",
+)
 def consume(
     server: str,
     topic: str,
+    ssl: bool,
+    ca: str,
+    cert: str,
+    key: str,
+    dbname: str,
     dbhost: str,
     dbuser: str,
     dbpass: str,
     dbport: int,
+    dbschema: str,
 ):
     """Consume messages from Kafka topic.
 
@@ -104,15 +151,28 @@ def consume(
     information within a Postgres database.
     """
     # Initialize the Kafka consumer
-    consumer = kafka.KafkaConsumer(topic, bootstrap_servers=[server])
+    kwargs = {}
+
+    if ssl:
+        kwargs["security_protocol"] = "SSL"
+        kwargs["ssl_cafile"] = ca
+        kwargs["ssl_certfile"] = cert
+        kwargs["ssl_keyfile"] = key
+
+    consumer = kafka.KafkaConsumer(topic, bootstrap_servers=[server], **kwargs)
 
     # Connection database initialization
     conn = psycopg2.connect(
-        host=dbhost, user=dbuser, password=dbpass, port=dbport
+        dbname=dbname, host=dbhost, user=dbuser, password=dbpass, port=dbport
     )
 
     # Get a fresh cursor
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    # Create table metrics onto the database
+    with open(dbschema, "r") as f:
+        cur.execute(f.read())
+        conn.commit()
 
     try:
         # Iter over all new messages
