@@ -4,7 +4,7 @@
 """The project entry point."""
 
 
-from moniven import cli
+from avnwm import cli
 
 
 def main():

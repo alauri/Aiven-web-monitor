@@ -9,7 +9,7 @@ import os
 import pytest
 from click.testing import CliRunner
 
-from moniven import cli
+from avnwm import cli
 
 
 @pytest.mark.acceptance

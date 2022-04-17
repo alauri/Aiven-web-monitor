@@ -50,10 +50,10 @@ doc:
 
 
 lint:
-	$(POETRY) run black moniven
-	$(POETRY) run isort moniven
-	$(POETRY) run flake8 moniven
-	$(POETRY) run $(MYPY) --install-types --non-interactive moniven
+	$(POETRY) run black avnwm
+	$(POETRY) run isort avnwm
+	$(POETRY) run flake8 avnwm
+	$(POETRY) run $(MYPY) --install-types --non-interactive avnwm
 
 
 lint-dev:

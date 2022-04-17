@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "aiven-monitor"
+name = "aiven-web-monitor"
 version = "0.1.0"
 description = "Aiven websites monitoring"
 authors = ["Andrea Lauri <andrea.lauri86@gmail.com>"]
 readme = "README.md"
 packages = [
-    { include = "moniven" },
+    { include = "avnwm" },
 ]
 classifiers = [
     "Programming Language :: Python :: 3.9",
@@ -36,7 +36,7 @@ sphinx-autodoc-typehints = "^1.18.1"
 pytest-mock = "^3.7.0"
 
 [tool.poetry.scripts]
-moniven-cli = "moniven.__main__:main"
+avn-wm = "avnwm.__main__:main"
 
 [tool.mypy]
 check_untyped_defs = true
@@ -61,7 +61,7 @@ profile = "black"
 use_parentheses = true
 
 [tool.pytest.ini_options]
-# addopts = "-s -vvv --cov moniven --cov-fail-under=95"
+# addopts = "-s -vvv --cov avnwm --cov-fail-under=95"
 addopts = "-s -vvv"
 testpaths = [
     "tests",

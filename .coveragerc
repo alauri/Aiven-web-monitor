@@ -1,8 +1,8 @@
 [run]
-source = moniven
+source = avnwm
 omit =
     */tests/*
-    moniven/__main__.py
+    avnwm/__main__.py
 
 [report]
 skip_covered = True

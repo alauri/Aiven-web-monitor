@@ -7,7 +7,7 @@ import os
 
 import pytest
 
-from moniven.core import web
+from avnwm.core import web
 
 
 @pytest.mark.unit

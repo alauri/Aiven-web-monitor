@@ -13,7 +13,7 @@ import kafka
 import psycopg2
 import psycopg2.extras
 
-from moniven.core import web
+from avnwm.core import web
 
 
 @click.group()

@@ -1,16 +1,18 @@
-# Website monitor
+# Website monitor with Aiven
 
-**Moniven** is a web monitor that checks a list of websites and looks for a
-given pattern within the page content.
+This project is a web monitor developed by using Aiven's services.
 
-It supports multiple websites at the same time, which can be specified by
-editing the file *sources.ini*.
+It checks the availability of a list of web sites specified within the file
+*sources.ini* and tries to extract the data of a scecific tag from their
+contents; if found, the data are published to an Aiven Kafka topic by a
+producer and read by a consumer that also stores them onto an Aiven Postgres
+instance.
 
 
 ## Requirements and configuration
 
-This project has been tested against *Python3.9* and *Python3.10* and developed
-by using Poetry as Python package manager.
+The project has been developed by using Poetry and tested against *Python3.9*
+and *Python3.10*.
 
 To manage the project locally you can use *Makefile*:
 
@@ -23,7 +25,7 @@ Install production dependencies with:
 
     $ make install
 
-or even the dev dependencies with:
+or development dependencies with:
 
     $ make install-dev
 
@@ -37,11 +39,11 @@ If needed, the project can also be built as a Python library:
 
 ## Execute
 
-Moniven is a *Command Line Interface (CLI)* developed with Click and that
-exposes below commands:
+The project exposes a *Command Line Interface (CLI)* named **avnwm** developed
+with Click with the below commands:
 
- - *moniven-cli produce*: start the producer;
- - *moniven-cli consume*: start the consumer.
+ - *avn-wm produce*: start the producer;
+ - *avn-wm consume*: start the consumer.
 
 
 ## Run tests
@@ -61,11 +63,10 @@ shell:
 
     $ poetry shell
 
-and run the command *pytest -m <test-marker>* and select one or more test
-markers you want to run from the following list:
+and run specific tests by using Pytest markers or Python module directly.
+Available markers are:
 
  - **unit**: run unit tests (test single functionality);
- - **sociable**: run sociable tests (test for functions interaction);
  - **acceptance**: run E2E tests (test for user interface).
 
 
@@ -79,12 +80,8 @@ It also supports test suite coverage with a threshold of 95%, just run *tox*.
 
 ## Start services
 
-Services can be started locally by using Docker.
-
-To start services run:
+*avmwm* can work locally for testing purposes with just the default
+configuration; services can be started with Docker:
 
     $ make services
-
-and to stop run:
-
     $ make services-down
