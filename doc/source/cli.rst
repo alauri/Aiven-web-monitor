@@ -107,7 +107,7 @@ like the command below:
 
 ::
 
-    $ avn-wm <command> --server <the-server-uri> \
+    $ avn-wm <command> --service-uri <the-kafka-service-uri> \
         --ssl \
         --ca ca.pem \
         --cert service.cert \

@@ -36,7 +36,9 @@ def cli():
 @click.option(
     "--delay", default=60, help="time to wait before the next iteration"
 )
-@click.option("--server", default="localhost:9092", help="the Kafka server")
+@click.option(
+    "--service-uri", default="localhost:9092", help="the Kafka service URI"
+)
 @click.option(
     "--topic",
     default="topic-papers",
@@ -54,7 +56,7 @@ def produce(
     sources: str,
     loop: bool,
     delay: int,
-    server: str,
+    service_uri: str,
     topic: str,
     ssl: bool,
     ca: str,
@@ -84,7 +86,7 @@ def produce(
         kwargs["ssl_certfile"] = cert
         kwargs["ssl_keyfile"] = key
 
-    producer = kafka.KafkaProducer(bootstrap_servers=[server], **kwargs)
+    producer = kafka.KafkaProducer(bootstrap_servers=[service_uri], **kwargs)
 
     while True:
         # For each URL to parse get its content and search for a specific tag
@@ -113,7 +115,9 @@ def produce(
 
 
 @cli.command()
-@click.option("--server", default="localhost:9092", help="the Kafka server")
+@click.option(
+    "--service-uri", default="localhost:9092", help="the Kafka service URI"
+)
 @click.option(
     "--topic",
     default="topic-papers",
@@ -138,7 +142,7 @@ def produce(
     help="the schema to initialize the database",
 )
 def consume(
-    server: str,
+    service_uri: str,
     topic: str,
     ssl: bool,
     ca: str,
@@ -165,7 +169,9 @@ def consume(
         kwargs["ssl_certfile"] = cert
         kwargs["ssl_keyfile"] = key
 
-    consumer = kafka.KafkaConsumer(topic, bootstrap_servers=[server], **kwargs)
+    consumer = kafka.KafkaConsumer(
+        topic, bootstrap_servers=[service_uri], **kwargs
+    )
 
     # Connection database initialization
     conn = psycopg2.connect(
