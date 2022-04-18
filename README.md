@@ -46,6 +46,12 @@ with Click with the below commands:
  - *avn-wm produce*: start the producer;
  - *avn-wm consume*: start the consumer.
 
+Please refer to the documentation that can be built with the below command
+for additional information about how to start the services or for additional
+ideas about the project:
+
+    $ make doc
+
 
 ## Run tests
 
@@ -86,11 +92,3 @@ configuration; services can be started with Docker:
 
     $ make services
     $ make services-down
-
-
-## Additional ideas
-
-In the meanwhile of the development I have had additional ideas that can be
-found under the page *ideas* of the documentation that can be built with:
-
-    $ make doc
