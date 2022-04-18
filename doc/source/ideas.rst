@@ -17,3 +17,6 @@ in different ways.
 Another idea would to improve the readability of the code would be to organize
 all the CLI commands in packages rather than to have all of them within a single
 Python module.
+
+One additional improvement could be to check if the kafka topic already exists
+and, if it doesn't, create it programmatically.

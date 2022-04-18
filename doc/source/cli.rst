@@ -16,6 +16,19 @@ To add an URL to the list, just define a label to append under the section
 *sources* and key *labels*, plus a new section for the new label with the
 keys *url* and *target*.
 
+::
+
+        [sources]
+        labels = website1,
+                ...
+
+        [website1]
+        url = https://www.website1.org/
+        target = main-title1
+
+        ...
+
+
 For each url the monitor tries to retrieve the data from the target and, if
 found, sends it to the Kafka topic **topic-papers** by default.
 
@@ -47,22 +60,17 @@ Check out the other flags with:
     $ avn-wm produce --help
 
 
-Without flags this command tries to connect to a local Kafka service that can be
-started with Docker.
+.. note::
+
+        Without flags this command tries to connect to a local Kafka service
+        that can be started with Docker.
 
 
 The Consumer
 ------------
 
-It automatically subscribes to the topic and waits for messages.
-
-To connect the consumer to an Aiven Postgres instance you have to specify the
-database info:
-
-::
-
-    $ avn-wm consume --dbname <name> --dbhost <host> --dbuser <user> --dbpass <pass> --dbport <port>
-
+It subscribes to the topic and waits for messages that are stored onto a
+Postgres database.
 
 Check out the other flags with:
 
@@ -71,8 +79,10 @@ Check out the other flags with:
     $ avn-wm consume --help
 
 
-Without flags this command tries to connect to a local Kafka service that can be
-started with Docker.
+.. note::
+
+        Without flags this command tries to connect to a local Kafka and
+        Postgres services that can be started with Docker.
 
 
 The local services
@@ -86,13 +96,40 @@ services with:
     $ make services
 
 
-The SSL certificate
--------------------
+Connect to Aiven services
+-------------------------
 
-Both commands supports the SSL certificate for the Aiven Kafka instance and
-that can be enabled with the flag *--ssl* and a set of other flag to specify
-the ssl certificate files:
+Both commands can be executed against Aiven services by giving specific remote
+credentials.
+
+To connect both commands to remote Aiven Kafka instances use SSL certificate
+like the command below:
 
 ::
 
-    $ avn-wm <command> --server <the-server-uri> --ssl --ca ca.pem --cert service.cert --key service.key
+    $ avn-wm <command> --server <the-server-uri> \
+        --ssl \
+        --ca ca.pem \
+        --cert service.cert \
+        --key service.key
+
+
+.. note::
+
+        Before to start producer or consumer, the kafka topic must be create
+        manually.
+
+        In order to process all the messages in the right way, the 'consume'
+        must be start before the 'produce' one
+
+
+To connect the consumer to an Aiven Postgres instance specify all the database
+information:
+
+::
+
+    $ avn-wm consume --dbname <name> \
+        --dbhost <host> \
+        --dbuser <user> \
+        --dbpass <pass> \
+        --dbport <port>

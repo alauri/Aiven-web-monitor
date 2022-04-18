@@ -10,6 +10,7 @@ import time
 
 import click
 import kafka
+import kafka.errors
 import psycopg2
 import psycopg2.extras
 
@@ -29,9 +30,11 @@ def cli():
     default=os.path.join(os.path.dirname(__file__), "..", "sources.ini"),
     help="file containing the list of URLs to parse",
 )
-@click.option("--loop/--no-loop", default=False, help="run the producer in loop")
 @click.option(
-    "--delay", default=60000.0, help="time to wait before the next iteration"
+    "--loop/--no-loop", default=False, help="run the producer in loop"
+)
+@click.option(
+    "--delay", default=60, help="time to wait before the next iteration"
 )
 @click.option("--server", default="localhost:9092", help="the Kafka server")
 @click.option(
@@ -50,7 +53,7 @@ def cli():
 def produce(
     sources: str,
     loop: bool,
-    delay: float,
+    delay: int,
     server: str,
     topic: str,
     ssl: bool,
@@ -94,8 +97,11 @@ def produce(
             data = web.parse(cont, config[label]["target"])
             if data:
                 data = f"{info},{data}"
-                _ = producer.send(topic, data.encode("utf-8"))
-                click.echo(f"Data sent to topic '{topic}'")
+                try:
+                    _ = producer.send(topic, data.encode("utf-8"))
+                    click.echo(f"Data sent to topic '{topic}'")
+                except kafka.errors.KafkaTimeoutError:
+                    click.echo("Data didn't send because a timeout error")
 
         # Check the loop. If true, execute the producer periodically
         if not loop:
