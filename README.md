@@ -8,6 +8,7 @@ contents; if found, the data are published to an Aiven Kafka topic by a
 producer and read by a consumer that also stores them onto an Aiven Postgres
 instance.
 
+NOTE: This repo is no longer maintained and it's been archived
 
 ## Requirements and configuration
 
